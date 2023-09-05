@@ -5,6 +5,7 @@ import { trackEffects, triggerEffects } from "./baseHandler";
 class ComputedRefImpl {
   effect;
   _value;
+  __v_isRef = true;
   dep = new Set();
   _dirty = true;
   constructor(public getter, public setter) {
