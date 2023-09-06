@@ -1,3 +1,5 @@
+import { recordEffectScope } from "./effectScope";
+
 export let activeEffect = undefined;
 
 function cleanupEffect(effect) {
@@ -15,7 +17,9 @@ export class ReactiveEffect {
   parent = undefined;
   active = true;
   //this.scheduler
-  constructor(public fn, public scheduler?) {} //构造函数中 只执行一次  用户传进来个函数
+  constructor(public fn, public scheduler?) {
+    recordEffectScope(this)
+  } //构造函数中 只执行一次  用户传进来个函数
   deps = []; //effect中要记录哪些属性是在effect中调用的
   run() {
     // 当运行的时候，我们需要将属性和对应的effect关联起来
