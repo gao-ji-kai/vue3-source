@@ -4,9 +4,9 @@ class EffectScope {
   effects = [];
   parent = null;
   scopes = []; //父亲用于存储儿子的effectScope
-  constructor() {
+  constructor(detached) {
     // 当我自己初始化的时候
-    if (activeEffectScope) {
+    if (!detached && activeEffectScope) {
       activeEffectScope.scopes.push(this);
     }
   }
@@ -23,8 +23,8 @@ class EffectScope {
     // 让所有的effect停止收集
     for (let i = 0; i < this.effects.length; i++) {
       this.effects[i].stop();
-      }
-      // 停止儿子中的effect
+    }
+    // 停止儿子中的effect
     if (this.scopes.length) {
       for (let i = 0; i < this.scopes.length; i++) {
         this.scopes[i].stop();
@@ -39,6 +39,6 @@ export function recordEffectScope(effect) {
   }
 }
 
-export function effectScope() {
-  return new EffectScope();
+export function effectScope(detached = false) {
+  return new EffectScope(detached);
 }
