@@ -4,7 +4,12 @@ export function isVNode(val) {
   return !!(val && val.__v_isVNode);
 }
 
-export function createVNode(type, props, children=null) {
+// 比较两个节点 是不是相同节点
+export function isSameVnode(n1, n2) {
+  return n1.type === n2.type && n1.key === n2.key;
+}
+
+export function createVNode(type, props, children = null) {
   // 很像react.creatElement这个方法
 
   // 如果类型是字符串 那么就是一个元素
