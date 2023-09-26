@@ -73,6 +73,51 @@ export function createRenderer(options) {
       }
     }
   };
+  const patchKeyedChildren = (c1, c2, el) => {
+    // 有优化的点  dom操作常见的方式  1.前后后增加 前后删除
+    // 如果不优化  那就比较c1 c2的差异 就是循环比较
+
+    // 定义两个标识  分别指向头部和尾部
+    let i = 0; //头部索引
+    let e1 = c1.length - 1;
+    let e2 = c2.length - 1;
+    // a,b,c
+    // a,b,c,d
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[i];
+      const n2 = c2[i];
+      if (isSameVnode(n1, n2)) {
+        patch(n1, n2, el);
+      } else {
+        break;
+      }
+      i++;
+    }
+
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[e1];
+      const n2 = c2[e2];
+      if (isSameVnode(n1, n2)) {
+        patch(n1, n2, el);
+      } else {
+        break;
+      }
+      e1--;
+      e2--;
+    }
+    // 新的比老的多了 如何知道有新增元素？
+    // i>e1  说明新的比老的长 有新增逻辑
+    if (i > el) {
+      if (i <= e2) {
+        //i和e2之间为新增的部分
+        while (i <= e2) {
+          patch(null, c2[i], el);
+          i++;
+        }
+      }
+    }
+    console.log(i, e1, e2);
+  };
   const patchChildren = (n1, n2, el) => {
     // 比较两个前后节点的差异
     let c1 = n1.children; //老儿子
@@ -105,6 +150,7 @@ export function createRenderer(options) {
       if (preShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
           //diff 算法
+          patchKeyedChildren(c1, c2, el);
         } else {
           //老得是数组 新的是空的情况
           unmountChildren(c1); // 需清空老得;
